@@ -4,6 +4,7 @@ import React, {
   useState,
   useRef,
   useCallback,
+  useMemo,
 } from "react";
 import { Link } from "gatsby";
 import { useInView } from "react-intersection-observer";
@@ -15,6 +16,8 @@ import { decrypt } from "../utils/string";
 import Layout from "./Layout";
 import Logo from "./Logo";
 import IconSettings from "./IconSettings";
+import IconLeft2Right from "./IconLeft2Right";
+import IconRight2Left from "./IconRight2Left";
 import Image from "./Image";
 import useLocalStorage from "../hooks/useLocalStorage";
 import useWindowSize from "../hooks/useWindowSize";
@@ -26,6 +29,10 @@ const READING_MODE_WIDTH = "0";
 const READING_MODE_HEIGHT = "1";
 const READING_MODE_WEBTOON = "2";
 const READING_MODE_COUNT = 3;
+const DIRECTION_KEY = "directon";
+const DIRECTION_LEFT_TO_RIGHT = "0";
+const DIRECTION_RIGHT_TO_LEFT = "1";
+const DIRECTION_COUNT = 2;
 
 export default function PageBook(props) {
   const {
@@ -39,6 +46,10 @@ export default function PageBook(props) {
   const [readingMode, setReadingMode] = useLocalStorage(
     READING_MODE_KEY,
     READING_MODE_WIDTH
+  );
+  const [direction, setDirection] = useLocalStorage(
+    DIRECTION_KEY,
+    DIRECTION_LEFT_TO_RIGHT
   );
   const { width: windowWidth, height: windowHeight } = useWindowSize();
   const [navHidden, setNavHidden] = useState(true);
@@ -65,30 +76,65 @@ export default function PageBook(props) {
     }
   }, []);
 
-  useEffect(() => {}, [goBack, goForward]);
-
-  function onPageClick(e, pageIndex) {
-    const windowWidth = window.innerWidth;
-    const clickX = e.clientX;
-    if (clickX < windowWidth / 10) {
-      goBack(pageIndex);
-    } else if (clickX < (9 * windowWidth) / 10) {
-      setNavHidden((flag) => !flag);
-    } else {
-      goForward(pageIndex);
+  useEffect(() => {
+    function click(x, y) {
+      const ev = new MouseEvent("click", {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        clientX: x,
+        clientY: y,
+      });
+      const el = document.elementFromPoint(x, y);
+      el.dispatchEvent(ev);
     }
-  }
 
-  function onSettingsButtonClick() {
+    function downHandler({ key }) {
+      if (key === "ArrowLeft") {
+        click(windowWidth / 12, windowHeight / 2);
+      } else if (key === "ArrowRight") {
+        click((11 * windowWidth) / 12, windowHeight / 2);
+      }
+    }
+    window.addEventListener("keydown", downHandler);
+
+    return () => {
+      window.removeEventListener("keydown", downHandler);
+    };
+  }, []);
+
+  const onPageClick = useCallback(
+    (e, pageIndex) => {
+      const windowWidth = window.innerWidth;
+      const clickX = e.clientX;
+      if (clickX < windowWidth / 10) {
+        goBack(pageIndex);
+      } else if (clickX < (9 * windowWidth) / 10) {
+        setNavHidden((flag) => !flag);
+      } else {
+        goForward(pageIndex);
+      }
+    },
+    [goBack, goForward, setNavHidden]
+  );
+
+  const onReadingModeButtonClick = useCallback(() => {
     setReadingMode(String((parseInt(readingMode) + 1) % READING_MODE_COUNT));
-  }
+  }, [setReadingMode, readingMode]);
+
+  const onDirectionButtonClick = useCallback(() => {
+    setDirection(String((parseInt(direction) + 1) % DIRECTION_COUNT));
+  }, [setDirection, direction]);
 
   return (
     <Layout>
       <Header
         title={decryptedName}
         hidden={navHidden}
-        onSettingsButtonClick={onSettingsButtonClick}
+        onReadingModeButtonClick={onReadingModeButtonClick}
+        onDirectionButtonClick={onDirectionButtonClick}
+        readingMode={readingMode}
+        direction={direction}
         {...{ prevPath, nextPath }}
       />
       {bookPages.edges.map(({ node: { publicURL } }, index) => {
@@ -126,10 +172,30 @@ export default function PageBook(props) {
 }
 
 function Header(props) {
-  const { title, hidden, onSettingsButtonClick, prevPath, nextPath } = props;
+  const {
+    title,
+    hidden,
+    readingMode,
+    direction,
+    onReadingModeButtonClick,
+    onDirectionButtonClick,
+    prevPath,
+    nextPath,
+  } = props;
+
   const headerClassName = classnames(styles.header, {
     [styles.headerHidden]: hidden,
   });
+
+  const readingModeText = useMemo(() => {
+    if (readingMode === READING_MODE_HEIGHT) {
+      return "H";
+    } else (readingMode === READING_MODE_WIDTH) {
+      return "W";
+    } else {
+      return "T";
+    }
+  }, [readingMode]);
 
   return (
     <div className={headerClassName}>
@@ -152,8 +218,21 @@ function Header(props) {
         ) : null}
       </div>
       <div className={styles.headerRightSection}>
-        <button className={styles.headerButton} onClick={onSettingsButtonClick}>
-          <IconSettings className={styles.headerIcon} />
+        <button
+          className={styles.headerButton}
+          onClick={onDirectionButtonClick}
+        >
+          {direction === DIRECTION_LEFT_TO_RIGHT ? (
+            <IconLeft2Right className={styles.headerIcon} />
+          ) : (
+            <IconRight2Left className={styles.headerIcon} />
+          )}
+        </button>
+        <button
+          className={styles.headerButton}
+          onClick={onReadingModeButtonClick}
+        >
+          <span className={styles.headerIconText}>{readingModeText}</span>
         </button>
       </div>
     </div>

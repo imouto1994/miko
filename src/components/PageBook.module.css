@@ -104,6 +104,12 @@
   fill: white;
 }
 
+.headerIconText {
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+}
+
 /* Page */
 .page {
   margin-bottom: 32px;
