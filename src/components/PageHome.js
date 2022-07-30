@@ -17,6 +17,7 @@ import { naturalCompare, decrypt } from "../utils/string";
 import Layout from "./Layout";
 import Logo from "./Logo";
 import Image from "./Image";
+import IconJapan from "./IconJapan";
 
 import * as styles from "./PageHome.module.css";
 
@@ -29,7 +30,7 @@ export default function PageHome(props) {
 
   // Flag to know whether entries are displayed as grid or list
   const isListDisplay = useMemo(() => {
-    return thumbnails.edges.some(({ node }) => {
+    return thumbnails.edges.every(({ node }) => {
       const [_, width, height] = node.name.split("-");
       return width < MIN_WIDTH_FOR_GRID;
     });
@@ -100,6 +101,7 @@ function GridLayout(props) {
                 marginTop={windowHeight * 5}
                 marginBottom={windowHeight * 5}
                 displayGrid={true}
+                titleName={titleName}
               />
             </Link>
           );
@@ -161,8 +163,15 @@ function ListLayout(props) {
 }
 
 function Thumbnail(props) {
-  const { width, height, publicURL, marginTop, marginBottom, displayGrid } =
-    props;
+  const {
+    width,
+    height,
+    publicURL,
+    marginTop,
+    marginBottom,
+    displayGrid,
+    titleName,
+  } = props;
   const ratio = height / width;
   const [imageBuffer, setImageBuffer] = useState(null);
   const [blobUrl, setBlobUrl] = useState(null);
@@ -195,6 +204,10 @@ function Thumbnail(props) {
     };
   }, [imageBuffer, inView]);
 
+  const isJapan = useMemo(() => {
+    return titleName.includes("[JP]");
+  }, [titleName]);
+
   const thumbnailClassName = classnames(styles.thumbnail, {
     [styles.thumbnailGrid]: displayGrid,
     [styles.thumbnailList]: !displayGrid,
@@ -210,6 +223,7 @@ function Thumbnail(props) {
       {inView && blobUrl != null ? (
         <Image className={styles.thumbnailImage} src={blobUrl} />
       ) : null}
+      {isJapan ? <IconJapan className={styles.thumbnaiFlag} /> : null}
     </div>
   );
 }

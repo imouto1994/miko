@@ -10,12 +10,12 @@ export default function IconLeft2Right(props) {
       viewBox="0 0 48 48"
       className={className}
     >
-      <path fill="#000" fill-opacity=".01" d="M0 0h48v48H0z" />
+      <path fill="#000" fillOpacity=".01" d="M0 0h48v48H0z" />
       <path
         stroke="#fff"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="4"
         d="M34 24H6m16-12 12 12-12 12m20-24v24"
       />
     </svg>
