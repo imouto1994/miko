@@ -1,0 +1,25 @@
+{
+  "name": "miko-reader",
+  "version": "1.0.0",
+  "description": "Intuitive reader library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "16.16.0",
+    "pnpm": "7.7.1"
+  },
+  "dependencies": {
+    "classnames": "2.3.1",
+    "crypto-js": "4.1.1",
+    "gatsby": "4.9.3",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-intersection-observer": "8.33.1",
+    "slugify": "1.6.5"
+  }
+}
