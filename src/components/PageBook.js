@@ -4,7 +4,6 @@ import React, {
   useState,
   useRef,
   useCallback,
-  useMemo,
 } from "react";
 import { Link } from "gatsby";
 import { useInView } from "react-intersection-observer";
@@ -108,11 +107,19 @@ export default function PageBook(props) {
       const windowWidth = window.innerWidth;
       const clickX = e.clientX;
       if (clickX < windowWidth / 10) {
-        goBack(pageIndex);
+        if (direction === DIRECTION_LEFT_TO_RIGHT) {
+          goBack(pageIndex);
+        } else {
+          goForward(pageIndex);
+        }
       } else if (clickX < (9 * windowWidth) / 10) {
         setNavHidden((flag) => !flag);
       } else {
-        goForward(pageIndex);
+        if (direction === DIRECTION_LEFT_TO_RIGHT) {
+          goForward(pageIndex);
+        } else {
+          goBack(pageIndex);
+        }
       }
     },
     [goBack, goForward, setNavHidden]
@@ -190,7 +197,7 @@ function Header(props) {
   const readingModeText = useMemo(() => {
     if (readingMode === READING_MODE_HEIGHT) {
       return "H";
-    } else (readingMode === READING_MODE_WIDTH) {
+    } else if (readingMode === READING_MODE_WIDTH) {
       return "W";
     } else {
       return "T";
