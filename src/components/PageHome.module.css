@@ -91,7 +91,7 @@
 .thumbnailFlag {
   position: absolute;
   display: block;
-  bottom: 0;
+  bottom: -7px;
   right: 0;
   z-index: 2;
   width: 36px;

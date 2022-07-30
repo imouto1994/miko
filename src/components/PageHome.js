@@ -223,7 +223,7 @@ function Thumbnail(props) {
       {inView && blobUrl != null ? (
         <Image className={styles.thumbnailImage} src={blobUrl} />
       ) : null}
-      {isJapan ? <IconJapan className={styles.thumbnaiFlag} /> : null}
+      {isJapan ? <IconJapan className={styles.thumbnailFlag} /> : null}
     </div>
   );
 }
