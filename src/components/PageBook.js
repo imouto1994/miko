@@ -122,7 +122,7 @@ export default function PageBook(props) {
         }
       }
     },
-    [goBack, goForward, setNavHidden]
+    [goBack, goForward, setNavHidden, direction]
   );
 
   const onReadingModeButtonClick = useCallback(() => {

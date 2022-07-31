@@ -1,6 +1,6 @@
 {
   "name": "miko-reader",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Intuitive reader library",
   "main": "index.js",
   "scripts": {
