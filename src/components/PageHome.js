@@ -150,6 +150,7 @@ function ListLayout(props) {
                     marginTop={windowHeight * 5}
                     marginBottom={windowHeight * 5}
                     displayGrid={false}
+                    titleName={episodeName}
                   />
                 );
               })}
